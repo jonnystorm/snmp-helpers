@@ -66,13 +66,13 @@ ip_mask_to_cidr()
 
 
 if [ $# -ne 1 ]; then
-  echo "$0 <IP_address>" >&2
+  echo "$0 <host>" >&2
   exit 1
 fi
 
-ip=$1
+HOST=$1
 
 while read ip_mask_tuple; do
   ip_mask_to_cidr $ip_mask_tuple
-done < <(get_ip_mask_tuples $ip)
+done < <(get_ip_mask_tuples $HOST)
 

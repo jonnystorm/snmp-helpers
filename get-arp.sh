@@ -34,13 +34,13 @@ format_arp_entries()
 
 
 if [ $# -ne 1 ]; then
-  echo "$0 <IP_address>" >&2
+  echo "$0 <host>" >&2
   exit 1
 fi
 
-ip=$1
+HOST=$1
 
-get_arp_entries $ip \
+get_arp_entries $HOST \
   | filter_non_entries \
   | format_arp_entries
 

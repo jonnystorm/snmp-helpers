@@ -26,11 +26,11 @@ get_vlans()
 
 
 if [ $# -ne 1 ]; then
-  echo "$0 <IP_address>" >&2
+  echo "$0 <host>" >&2
   exit 1
 fi
 
-ip=$1
+HOST=$1
 
-get_vlans $ip
+get_vlans $HOST
 

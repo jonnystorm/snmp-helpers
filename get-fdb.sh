@@ -53,14 +53,14 @@ sort_numeric()
 
 
 if [ $# -ne 1 ]; then
-  echo "$0 <IP_address>" >&2
+  echo "$0 <host>" >&2
   exit 1
 fi
 
-ip=$1
+HOST=$1
 
-for vlan in `get_vlans $ip`; do
-  get_vlan_fdb $ip $vlan \
+for vlan in `get_vlans $HOST`; do
+  get_vlan_fdb $HOST $vlan \
     | filter_static_entries  \
     | format_fdb_entry $vlan \
     | lowercase

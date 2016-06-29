@@ -40,11 +40,11 @@ zip()
 
 
 if [ $# -ne 1 ]; then
-  echo "$0 <ip_address>" >&2
+  echo "$0 <host>" >&2
   exit 1
 fi
 
-ip=$1
+HOST=$1
 
-get_if_indices $ip | zip "$(get_if_aliases $ip)"
+get_if_indices $HOST | zip "$(get_if_aliases $HOST)"
 
