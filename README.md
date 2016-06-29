@@ -38,7 +38,7 @@ Export `SNMP_CREDENTIALS` with the path of your credentials file, or set it at e
     
     ./snmp-helpers/get-sysname.sh 192.0.2.1
     
-    SNMP_CREDENTIALS=~/snmp-credentials2c ./snmp-helpers/get-sysname.sh 192.0.2.2
+    SNMP_CREDENTIALS=~/snmp-credentialsv2c ./snmp-helpers/get-sysname.sh 192.0.2.2
 
 All output is arranged simply for easy parsing.
 
