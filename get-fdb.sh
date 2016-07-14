@@ -64,5 +64,6 @@ for vlan in `get_vlans $HOST`; do
     | filter_static_entries  \
     | format_fdb_entry $vlan \
     | lowercase
+
 done | sort_numeric
 

@@ -46,5 +46,6 @@ fi
 
 HOST=$1
 
-get_if_indices $HOST | zip "$(get_if_aliases $HOST)"
+get_if_indices $HOST \
+  | zip "$(get_if_aliases $HOST)"
 

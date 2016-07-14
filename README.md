@@ -23,13 +23,13 @@ or
 For SNMPv3, use
 
     cat > ~/snmp-credentials <<EOF
-    3 auth 'snmpuser' sha 'authpass'
+    3 auth snmpuser sha authpass
     EOF
 
 or
 
     cat > ~/snmp-credentials <<EOF
-    3 authPriv 'snmpuser' sha 'authpass' aes 'privpass'
+    3 authPriv snmpuser sha authpass aes privpass
     EOF
 
 Export `SNMP_CREDENTIALS` with the path of your credentials file, or set it at each command:

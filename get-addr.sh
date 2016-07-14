@@ -74,5 +74,6 @@ HOST=$1
 
 while read ip_mask_tuple; do
   ip_mask_to_cidr $ip_mask_tuple
+
 done < <(get_ip_mask_tuples $HOST)
 

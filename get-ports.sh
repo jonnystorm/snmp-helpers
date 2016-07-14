@@ -45,5 +45,6 @@ HOST=$1
 
 for vlan in `get_vlans $HOST`; do
   get_port_ifindex_pairs $HOST $vlan
+
 done | sort_numeric | uniq
 
