@@ -13,24 +13,36 @@ DIR=$(dirname "$0")
 
 source "$DIR"/snmp-env.sh
 
-get_vlans()
+
+function get_vlans
 {
   local host=$1
 
   local vtpVlanState=".1.3.6.1.4.1.9.9.46.1.3.1.1.2"
 
-  ${SNMPWALK} -One $host $vtpVlanState \
-    | sed -e "s/$vtpVlanState\.1\.//"  \
-    | awk '{print $1}'
+  ${SNMPWALK} -One $host $vtpVlanState |
+    sed -e "s/$vtpVlanState\.1\.//"    |
+    awk '{print $1}'
+}
+
+function print_usage_and_exit
+{
+  echo "$0 <host>" >&2
+
+  exit 1
+}
+
+function main
+{
+  if [ $# -ne 1 ]; then
+    print_usage_and_exit
+  fi
+
+  local host=$1
+
+  get_vlans $host
 }
 
 
-if [ $# -ne 1 ]; then
-  echo "$0 <host>" >&2
-  exit 1
-fi
-
-HOST=$1
-
-get_vlans $HOST
+main $@
 

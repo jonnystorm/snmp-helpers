@@ -23,7 +23,7 @@ or
 For SNMPv3, use
 
     cat > ~/snmp-credentials <<EOF
-    3 auth snmpuser sha authpass
+    3 authNoPriv snmpuser sha authpass
     EOF
 
 or

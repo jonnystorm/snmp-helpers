@@ -13,14 +13,16 @@ DIR=$(dirname "$0")
 
 source "$DIR"/snmp-env.sh
 
-get_vlans()
+
+function get_vlans
 {
   local host=$1
 
-  $DIR/get-vlans.sh $host | egrep -v '^100[2-5]$'
+  $DIR/get-vlans.sh $host |
+    egrep -v '^100[2-5]$'
 }
 
-get_vlan_fdb()
+function get_vlan_fdb
 {
   local host=$1
   local vlan_id=$2
@@ -28,42 +30,54 @@ get_vlan_fdb()
   ${SNMPTABLE} -n vlan-$vlan_id -Ov $host dot1dTpFdbTable
 }
 
-filter_static_entries()
+function filter_static_entries
 {
   cat | egrep 'learned|mgmt'
 }
 
-lowercase()
+function lowercase
 {
   cat | tr '[:upper:]' '[:lower:]'
 }
 
-format_fdb_entry()
+function format_fdb_entry
 {
+  # Output "port mac vid"
+  #
   local vlan_id=$1
 
-  # port mac vid
   cat | awk "{print \$2,\$1 \" $vlan_id\"}"
 }
 
-sort_numeric()
+function sort_numeric
 {
   cat | sort -n
 }
 
-
-if [ $# -ne 1 ]; then
+function print_usage_and_exit
+{
   echo "$0 <host>" >&2
+
   exit 1
-fi
+}
 
-HOST=$1
+function main
+{
+  if [ $# -ne 1 ]; then
+    print_usage_and_exit
+  fi
 
-for vlan in `get_vlans $HOST`; do
-  get_vlan_fdb $HOST $vlan \
-    | filter_static_entries  \
-    | format_fdb_entry $vlan \
-    | lowercase
+  local host=$1
 
-done | sort_numeric
+  for vlan in $(get_vlans $host)
+  do
+    get_vlan_fdb $host $vlan |
+      filter_static_entries  |
+      format_fdb_entry $vlan |
+      lowercase
+  done | sort_numeric
+}
+
+
+main $@
 

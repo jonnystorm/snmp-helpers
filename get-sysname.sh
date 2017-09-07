@@ -13,20 +13,33 @@ DIR=$(dirname "$0")
 
 source "$DIR"/snmp-env.sh
 
-get_sysname()
+
+function get_sysname
 {
   local host=$1
 
-  ${SNMPWALK} -Ov $host sysName.0 | awk '{print $2}'
+  ${SNMPWALK} -Ov $host sysName.0 |
+    awk '{print $2}'
+}
+
+function print_usage_and_exit
+{
+  echo "$0 <host>" >&2
+
+  exit 1
+}
+
+function main
+{
+  if [ $# -ne 1 ]; then
+    print_usage_and_exit
+  fi
+
+  local host=$1
+
+  get_sysname $host
 }
 
 
-if [ $# -ne 1 ]; then
-  echo "$0 <host>" >&2
-  exit 1
-fi
-
-HOST=$1
-
-get_sysname $HOST
+main $@
 

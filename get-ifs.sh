@@ -13,39 +13,51 @@ DIR=$(dirname "$0")
 
 source "$DIR"/snmp-env.sh
 
-get_if_aliases()
+
+function get_if_aliases
 {
   local ip=$1
 
-  ${SNMPTABLE} -Oe $ip ifXTable \
-    | egrep '[0-9]'             \
-    | awk '{print $1}'
+  ${SNMPTABLE} -Cf '|' -Oe $ip ifXTable |
+    egrep '[0-9]' |
+    awk -F'|' '{print $1,$18}'
 }
 
-get_if_indices()
+function get_if_indices
 {
   local ip=$1
 
-  ${SNMPTABLE} -Oe $ip ifTable \
-    | egrep '[0-9]'            \
-    | awk '{print $1}'
+  ${SNMPTABLE} -Oe $ip ifTable |
+    egrep '[0-9]'              |
+    awk '{print $1}'
 }
 
-zip()
+function zip
 {
   local right=$1
 
   cat | pr -tmJs' ' - <(echo "$right")
 }
 
-
-if [ $# -ne 1 ]; then
+function print_usage_and_exit
+{
   echo "$0 <host>" >&2
+
   exit 1
-fi
+}
 
-HOST=$1
+function main
+{
+  if [ $# -ne 1 ]; then
+    print_usage_and_exit
+  fi
 
-get_if_indices $HOST \
-  | zip "$(get_if_aliases $HOST)"
+  local host=$1
+
+  get_if_indices $host |
+    zip "$(get_if_aliases $host)"
+}
+
+
+main $@
 

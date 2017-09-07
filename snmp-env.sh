@@ -7,44 +7,41 @@
 # as published by Sam Hocevar. See the COPYING.WTFPL file for more details.
 
 
-get_snmp_common_args()
+function get_snmp_common_args
 {
-  echo "-mALL -Le"
+  echo -mALL -Le
 }
 
-get_snmpv1_args()
-{
-  local community=$1
-
-  echo \
-    "$(get_snmp_common_args) \
-     -v 1                    \
-     -c $community"
-}
-
-get_snmpv2c_args()
+function get_snmpv1_args
 {
   local community=$1
 
-  echo \
-    "$(get_snmp_common_args) \
-     -v 2c                   \
-     -c $community"
+  echo -n "$(get_snmp_common_args) "
+  echo -n "-v 1 "
+  echo    "-c $community"
 }
 
-get_snmpv3_auth_args()
+function get_snmpv2c_args
+{
+  local community=$1
+
+  echo -n "$(get_snmp_common_args) "
+  echo -n "-v 2c "
+  echo    "-c $community"
+}
+
+function get_snmpv3_authnopriv_args
 {
   local   sec_name=$1
   local auth_proto=$2
   local  auth_pass=$3
 
-  echo \
-    "-u ${sec_name}   \
-     -a ${auth_proto} \
-     -A ${auth_pass}"
+  echo -n "-u ${sec_name} "
+  echo -n "-a ${auth_proto} "
+  echo    "-A ${auth_pass}"
 }
 
-get_snmpv3_authpriv_args()
+function get_snmpv3_authpriv_args
 {
   local   sec_name=$1
   local auth_proto=$2
@@ -52,56 +49,50 @@ get_snmpv3_authpriv_args()
   local priv_proto=$4
   local  priv_pass=$5
 
-  echo \
-    "-u ${sec_name}   \
-     -a ${auth_proto} \
-     -A ${auth_pass}  \
-     -x ${priv_proto} \
-     -X ${priv_pass}"
+  echo -n "-u ${sec_name} "
+  echo -n "-a ${auth_proto} "
+  echo -n "-A ${auth_pass} "
+  echo -n "-x ${priv_proto} "
+  echo    "-X ${priv_pass}"
 }
 
-get_snmpv3_args()
+function get_snmpv3_args
 {
   local sec_level=$1
   shift
   
   case $sec_level in
-    auth)
-      echo \
-        "-l $sec_level \
-         $(get_snmpv3_auth_args $@)"
+    auth[nN]o[pP]riv)
+      echo -n "-l $sec_level "
+      echo    "$(get_snmpv3_authnopriv_args $@)"
       ;;
     auth[pP]riv)
-      echo \
-        "-l $sec_level \
-         $(get_snmpv3_authpriv_args $@)"
+      echo -n "-l $sec_level "
+      echo    "$(get_snmpv3_authpriv_args $@)"
       ;;
   esac
 }
 
-get_snmp_args()
+function get_snmp_args
 {
   local version=$1
   shift
 
   case $version in
     1)
-      echo \
-        "$(get_snmp_common_args) \
-         -v $version             \
-         $(get_snmpv1_args $@)"
+      echo -n "$(get_snmp_common_args) "
+      echo -n "-v $version "
+      echo    "$(get_snmpv1_args $@)"
       ;;
     2c)
-      echo \
-        "$(get_snmp_common_args) \
-         -v $version             \
-         $(get_snmpv2c_args $@)"
+      echo -n "$(get_snmp_common_args) "
+      echo -n "-v $version "
+      echo    "$(get_snmpv2c_args $@)"
       ;;
     3)
-      echo \
-        "$(get_snmp_common_args) \
-         -v $version             \
-         $(get_snmpv3_args $@)"
+      echo -n "$(get_snmp_common_args) "
+      echo -n "-v $version "
+      echo    "$(get_snmpv3_args $@)"
       ;;
   esac
 }

@@ -13,21 +13,23 @@ DIR=$(dirname "$0")
 
 source "$DIR"/snmp-env.sh
 
-get_ip_mask_tuples()
+
+function get_ip_mask_tuples
 {
+  # Output 192.0.2.1 255.255.255.0
+  #
   local host=$1
 
-  # 192.0.2.1 255.255.255.0
-  ${SNMPTABLE} -Ov $host ipAddrTable \
-    | grep '\.'                      \
-    | awk '{print $1,$3}'
+  ${SNMPTABLE} -Ov $host ipAddrTable |
+    grep '\.'                        |
+    awk '{print $1,$3}'
 }
 
-mask_octet_to_bits()
+function mask_octet_to_bits
 {
-  local oct=$1
+  local octet=$1
 
-  case $oct in
+  case $octet in
     0)   echo 0;;
     128) echo 1;;
     192) echo 2;;
@@ -40,14 +42,15 @@ mask_octet_to_bits()
   esac
 }
 
-mask_to_length()
+function mask_to_length
 {
   local mask=$1
 
   local octets=$(echo $mask | sed -e 's/\./ /g')
   local length=0
 
-  for o in $octets; do
+  for o in $octets
+  do
     local bits=$(mask_octet_to_bits $o)
 
     length=$((length + bits))
@@ -56,7 +59,7 @@ mask_to_length()
   echo $length
 }
 
-ip_mask_to_cidr()
+function ip_mask_to_cidr
 {
   local ip=$1
   local mask=$2
@@ -64,16 +67,28 @@ ip_mask_to_cidr()
   echo $ip/$(mask_to_length $mask)
 }
 
-
-if [ $# -ne 1 ]; then
+function print_usage_and_exit
+{
   echo "$0 <host>" >&2
+
   exit 1
-fi
+}
 
-HOST=$1
+function main
+{
+  if [ $# -ne 1 ]; then
+    print_usage_and_exit
+  fi
 
-while read ip_mask_tuple; do
-  ip_mask_to_cidr $ip_mask_tuple
+  local host=$1
 
-done < <(get_ip_mask_tuples $HOST)
+  while read ip_mask_tuple
+  do
+    ip_mask_to_cidr $ip_mask_tuple
+
+  done < <(get_ip_mask_tuples $host)
+}
+
+
+main $@
 
